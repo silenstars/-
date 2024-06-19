@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物流信息管理系统</title>
+    <!-- 引入 Vue 和 Element UI 的 CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #c2fae7;
+        }
+        #app {
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0e0e0e;
+            color: #e8dbdb;
+            padding: 10px 20px;
+        }
+        header img {
+            height: 40px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #2a2a2a;
+        }
+        nav a {
+            color: #e8dbdb;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .search-login {
+            display: flex;
+            align-items: center;
+        }
+        .search-login input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        .search-login button {
+            background-color: #66f8aa;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        .search-login button:hover {
+            background-color: #6eedc1;
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        button {
+            background-color: #04defc;
+            color: #2a2a2a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #04defc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button:active {
+            background-color: #04defc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .scroll-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .scroll-images {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .scroll-images img {
+            width: 100vw;
+            height: 80vh;
+            object-fit: cover;
+        }
+        .scroll-images img {
+            min-width: 100%;
+            transition: opacity 0.5s;
+        }
+        .scroll-dots {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .scroll-dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 5px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .scroll-dots span.active {
+            background: #007bff;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 400px;
+            transition: transform 0.2s ease-in-out;
+            flex: 0 0 auto; /* 禁止伸缩，保持原始大小 */
+            margin-right: 20px; /* 可根据需要调整间距 */
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-image img {
+            width: 100%;
+            height: auto;
+        }
+        .product-content {
+            padding: 20px;
+        }
+        .product-title {
+            font-size: 1.5em;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .product-summary {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .read-more {
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(45deg, #ff6b6b, #f94d6a);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .read-more:hover {
+            background: linear-gradient(45deg, #f94d6a, #ff6b6b);
+        }
+        .product-container {
+            display: flex;
+            flex-wrap: nowrap; /* 不换行 */
+            overflow-x: auto; /* 水平滚动 */
+            -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+        }
+        textarea {
+            width: 500px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #04defc;
+            color: #2a2a2a;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #04defc;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header>
+            <img src="logo.gif" alt="Logo">
+            <h2> 物流信息管理系统</h2>
+            <div class="search-login">
+                <input type="text" placeholder="搜索...">
+                <button>搜索</button>
+                <button>登录</button>
+            </div>
+            <div>
+                <img src="lyh.jpg" >
+            </div>
+        </el-header>
+        <nav>
+            <a href="#home" @click="handleSelect('1')">首页</a>
+            <a href="#parcel" @click="handleSelect('2')">快件管理</a>
+            <a href="#warehouse" @click="handleSelect('3')">仓库管理</a>
+            <a href="#community" @click="handleSelect('4')">社区</a>
+            <a href="#profile" @click="handleSelect('5')">个人中心</a>
+            <a href="#product" @click="handleSelect('6')">产品中心</a>
+            <a href="#news" @click="handleSelect('7')">产品推荐</a>
+            <a href="#callus" @click="handleSelect('8')">联系我们</a>
+        </nav>
+        <el-container>
+            <el-aside width="100px">
+                <el-menu
+                        @select="handleSelect"
+                        :default-active="activeIndex"
+                        class="el-menu-vertical-demo">
+                    <el-menu-item index="1">首页</el-menu-item>
+                    <el-menu-item index="2">快件管理</el-menu-item>
+                    <el-menu-item index="3">仓库管理</el-menu-item>
+                    <el-menu-item index="4">社区</el-menu-item>
+                    <el-menu-item index="5">个人中心</el-menu-item>
+                    <el-menu-item index="6">产品中心</el-menu-item>
+                    <el-menu-item index="7">产品推荐</el-menu-item>
+                    <el-menu-item index="8">联系我们</el-menu-item>
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <div v-if="activeIndex === '1'">
+                    <div class="scroll-container">
+                        <div class="scroll-images">
+                            <img src="wuliu2.jpg" alt="物流管理系统">
+                            <img src="jichang.jpg" alt="物流管理系统">
+                            <img src="wuliu3.jpg" alt="物流管理系统">
+                        </div>
+                        <div class="scroll-dots">
+                            <span v-for="(dot, index) in images.length" :key="index" :class="{ active: currentImageIndex === index }" @click="changeImage(index)"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <h1>产品中心</h1>
+                        <img src="zhuang.png" width="100%" height="800px">
+                    </div>
+                </div>
+                <div v-if="activeIndex === '2'">
+                    <div>
+                        <el-input v-model="searchQueryData1" placeholder="请输入快件名称"></el-input>
+                        <el-button @click="searchDeliveryRecord">搜索</el-button>
+                    </div>
+                    <el-table :data="caseData">
+                        <el-table-column prop="delivery_id" label="快件编号" width="180"></el-table-column>
+                        <el-table-column prop="delivery_name" label="快件名称"></el-table-column>
+                        <el-table-column prop="storage_name" label="发货仓库"></el-table-column>
+                        <el-table-column prop="storage_time" label="发货时间"></el-table-column>
+                        <el-table-column prop="destination" label="目的地"></el-table-column>
+                        <el-table-column prop="delivery_location" label="当前位置"></el-table-column>
+                        <el-table-column prop="courier" label="配送员"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <button @click="updateDeliveryRecord(scope.row)">修改</button>
+                                <button @click="deleteDeliveryRecord(scope.row.delivery_id)">删除</button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <input type="text" v-model="delivery_id" placeholder="快件编号"><br>
+                    <input type="text" v-model="delivery_name" placeholder="快件名称"><br>
+                    <input type="text" v-model="storage_name" placeholder="发货仓库"><br>
+                    <input type="text" v-model="storage_time" placeholder="发货时间"><br>
+                    <input type="text" v-model="destination" placeholder="目的地"><br>
+                    <input type="text" v-model="delivery_location" placeholder="当前位置"><br>
+                    <input type="text" v-model="courier" placeholder="配送员"><br>
+                    <button type="button" @click="addDeliveryRecord">添加</button>
+                    <button type="button" @click="getDeliveryRecord">查询</button>
+                    <div v-for="ite in list"   :key="ite.id">
+                        {{ ite }}
+                    </div>
+                </div>
+                <div v-if="activeIndex === '3'">
+                    <div>
+                        <el-input v-model="searchQueryData2" placeholder="请输入仓库名称"></el-input>
+                        <el-button @click="searchWarehouseRecord">搜索</el-button>
+                    </div>
+                    <el-table :data="tableData" style="width: 100%">
+                        <el-table-column prop="id" label="仓库编号" width="180"></el-table-column>
+                        <el-table-column prop="warehouse_name" label="仓库名称" width="180"></el-table-column>
+                        <el-table-column prop="location" label="仓库位置"></el-table-column>
+                        <el-table-column prop="phone" label="联系电话"></el-table-column>
+                        <el-table-column prop="createtime" label="建仓时间"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <button @click="updateWarehouseRecord(scope.row)">修改</button>
+                                <button @click="deleteWarehouseRecord(scope.row.id)">删除</button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div>
+                        <input type="text" v-model="id" placeholder="仓库编号"><br>
+                        <input type="text" v-model="warehouse_name" placeholder="仓库名称"><br>
+                        <input type="text" v-model="location" placeholder="仓库地址"><br>
+                        <input type="text" v-model="phone" placeholder="联系电话"><br>
+                        <button type="button" @click="addWarehouseRecord">添加</button>
+                        <button type="button" @click="getWarehouseRecord">查询</button>
+                    </div>
+
+
+                    <div v-for="item in list" :key="item.id">
+                        {{ item }}
+                    </div>
+                </div>
+                <div v-if="activeIndex === '4'">
+                    <h2>社区</h2>
+                    <el-table :data="messageData" style="width: 80%">
+                        <el-table-column prop="message_id" label="发布编号" width="180px"></el-table-column>
+                        <el-table-column prop="addname" label="发布者" width="180px"></el-table-column>
+                        <el-table-column prop="data" label="留言内容" width="600px"></el-table-column>
+                        <el-table-column label="操作" width="120px">
+                            <template slot-scope="scope">
+                                <button @click="deleteMessage(scope.row.message_id)">删除</button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div>
+                        <input type="text" v-model="addname" placeholder="发布者"><br>
+                        <input type="text" v-model="data" placeholder="留言内容"><br>
+                        <button type="button" @click="addMessage">添加</button>
+                    </div>
+                    <div v-for="message in list" >
+                        {{ message }}
+                    </div>
+                </div>
+                <div v-if="activeIndex === '5'">
+                    <h2>个人中心</h2>
+                    <el-card class="box-card">
+                        <h3>用户信息</h3>
+                        <p><strong>用户名:</strong> {{ profileForm.username }}</p>
+                        <p><strong>账号ID:</strong> {{ profileForm.userId }}</p>
+                    </el-card>
+                    <el-divider></el-divider>
+                    <h3>编辑个人信息</h3>
+                    <el-form :model="profileForm" label-width="80px">
+                        <el-form-item label="密码">
+                            <el-input type="password" v-model="profileForm.password"></el-input>
+                        </el-form-item>
+                        <el-form-item class="el-form-item--flex">
+                            <el-button type="primary" @click="updateProfile">更新信息</el-button>
+                            <el-button @click="resetProfile">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div v-if="activeIndex === '6'">
+                    <h2>产品中心</h2>
+                    <div>
+                        <img src="zhuang.png" width="100%" height="800px">
+                    </div>
+                </div>
+                <div v-if="activeIndex === '7'">
+                        <div class="product-container">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="lyh.jpg" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">物流公司最新物流产品</h2>
+                                    <p class="product-summary">它有人的智慧，哥哥的快递速度，你还在等什么，赶快下单吧</p>
+                                    <a href="#" class="read-more">点击了解产品</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="wurenche.png" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">产品推荐</h2>
+                                    <p class="product-summary">震惊！四川大学无人车，智慧物流前景可观。</p>
+                                    <a href="#" class="read-more">点击了解产品</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="广告.png" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">产品名称</h2>
+                                    <p class="product-summary">产品简介</p>
+                                    <a href="#" class="read-more">点击了解产品</a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                    <div v-if="activeIndex === '8'">
+                        <img src="lianxi.jpg"width="500px" height="400px">
+                        <h2>联系我们</h2>
+                        <h1>地址：四川大学六舍</h1>
+                        <h1>联系电话：13111878368</h1>
+                    </div>
+            </el-main>
+        </el-container>
+        <el-footer>
+            <p>@四川大学软件学院——物流管理系统 &copy; 2024(By 钟政 罗童)</p>
+        </el-footer>
+    </el-container>
+</div>
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                activeIndex: '1',
+                id: "",
+                message_id:'',
+                warehouse_name: "",
+                username: "",
+                data: "",
+                delivery_name: "",
+                delivery_id: "",
+                storage_name: "",
+                storage_time: "",
+                destination: "",
+                delivery_location: "",
+                courier: "",
+                list: [],
+                tableData: [],
+                caseData: [],
+                messageData: [],
+                isEditing: false,
+                editRecord: {
+                    id: '',
+                    warehouse_name: '',
+                    location: '',
+                    phone: ''
+                },
+                profileForm: {
+                    username: '钟政',
+                    userId: '12345',
+                    phone: '13111878368',
+                    realName: '钟政',
+                    password: '123',
+                    email: '',
+                    gender: '',
+                    identity: '',
+                    bio: ''
+                },
+                images: [
+                    'wuliu.png',
+                    'wuliu2.jpg',
+                    'wuliu3.jpg'
+                ],
+                currentImageIndex: 0
+            };
+        },
+        methods: {
+            handleSelect(key) {
+                this.activeIndex = key;
+            },
+            updateProfile() {
+                this.$message.success('个人信息更新成功');
+            },
+            resetProfile() {
+                this.profileForm.password = '';
+                this.profileForm.email = '';
+                this.profileForm.gender = '';
+                this.profileForm.identity = '';
+                this.profileForm.bio = '';
+                this.$message.success('表单已重置');
+            },
+            getWarehouseRecord() {
+                axios.post("/warehouse/get_record", {}).then(function (res) {
+                    console.log(res.data.aaData);
+                    vue.tableData = res.data.aaData; // 直接替换为从服务器获取的数据
+                    console.log(vue.tableData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            searchWarehouseRecord() {
+                if (this.searchQueryData2.trim() ==='') {
+                    this.getWarehouseRecord(); // 若搜索框为空，则重新获取所有商品记录
+                    return;
+                }
+                axios.post("/warehouse/search_record", {
+                    warehouse_name: this.searchQueryData2
+                }).then((res) => {
+                    console.log(res.data.aaData);
+                    this.tableData = res.data.aaData; // 替换为搜索结果
+                    console.log(this.tableData);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            addWarehouseRecord() {
+                alert("成功添加" + this.id);
+                axios.post("/warehouse/add_record", {
+                    id: this.id,
+                    warehouse_name: this.warehouse_name,
+                    location: this.location,
+                    phone: this.phone,
+                    createtime: this.createtime,
+                }).then(function (res) {
+                    console.log(res);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            deleteWarehouseRecord(id) {
+                axios.post("/warehouse/delete_record", {
+                    id: id
+                }).then(function (res) {
+                    console.log(res.data.aaData);
+                    // 更新本地表格数据
+                    vue.tableData = vue.tableData.filter(record => record.id !== id);
+                    console.log(vue.tableData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            updateWarehouseRecord() {
+                alert("删了再添加不就行了？ ")
+                axios.post("/warehouse/update_record", {
+                    id: this.editRecord.id,
+                    warehouse_name: this.editRecord.warehouse_name,
+                    location: this.editRecord.location,
+                    phone: this.editRecord.phone,
+                    updatetime: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                }).then((res) => {
+                    console.log(res);
+                    this.isEditing = false;
+                    this.getWarehouseRecord();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            cancelEdit() {
+                this.isEditing = false;
+                this.editRecord = {
+                    id: '',
+                    warehouse_name: '',
+                    location: '',
+                    phone: ''
+                };
+            },
+            getDeliveryRecord() {
+                axios.post("/delivery/getDeliveryRecord", {}).then(function (res) {
+                    console.log(res.data.Data);
+                    vue.caseData = res.data.Data; // 直接替换为从服务器获取的数据
+                    console.log(vue.caseData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            searchDeliveryRecord() {
+                if (this.searchQueryData1.trim() === '') {
+                    this.getDeliveryRecord(); // 若搜索框为空，则重新获取所有商品记录
+                    return;
+                }
+                axios.post("/delivery/search_record", {
+                    delivery_name: this.searchQueryData1
+                }).then((res) => {
+                    console.log(res.data.Data);
+                    this.caseData = res.data.Data; // 替换为搜索结果
+                    console.log(this.caseData);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            addDeliveryRecord() {
+                alert("成功添加" + this.delivery_id);
+                axios.post("/delivery/add_record", {
+                    delivery_id: this.delivery_id,
+                    delivery_name: this.delivery_name,
+                    storage_name: this.storage_name,
+                    storage_time: this.storage_time,
+                    destination: this.destination,
+                    delivery_location: this.delivery_location,
+                    courier: this.courier,
+                }).then(function (res) {
+                    console.log(res.data.Data);
+                    // 更新本地表格数据
+                    vue.caseData = vue.caseData.filter(record => record.delivery_id !== id);
+                    console.log(vue.caseData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            deleteDeliveryRecord(id) {
+                axios.post("/delivery/delete_record", {
+                    id: id
+                }).then(function (res) {
+                    console.log(res.data.Data);
+                    // 更新本地表格数据
+                    vue.caseData = vue.caseData.filter(record => record.delivery_id !== id);
+                    console.log(vue.caseData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            getMessage() {
+                axios.post("/message/get_message", {}).then(function (res) {
+                    console.log(res.data.messageData);
+                    vue.messageData = res.data.messageData; // 直接替换为从服务器获取的数据
+                    console.log(vue.messageData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            addMessage() {
+                // 生成唯一的 message_id
+                this.message_id = this.generateUniqueId();
+
+                axios.post("/message/add_message", {
+                    message_id: this.message_id, // 新增这一行
+                    addname: this.addname,
+                    data: this.data,
+                }).then((res) => {
+                    alert("成功添加留言内容： " + this.data);
+                    console.log(res);
+                    // Optionally, refresh the message list
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            deleteMessage(message_id) {
+                axios.post("/message/delete_message", {
+                    message_id: message_id,
+                }).then(function (res) {
+                    console.log(res.data.messageData);
+                    // 更新本地表格数据
+                    vue.messageData = vue.messageData.filter(record => record.message_id !== message_id);
+                    console.log(vue.messageData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            changeImage(index) {
+                this.currentImageIndex = index;
+                const scrollImages = this.$el.querySelector('.scroll-images');
+                scrollImages.style.transform = `translateX(-${index * 100}%)`;
+            },
+            autoScroll() {
+                setInterval(() => {
+                    this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+                    this.changeImage(this.currentImageIndex);
+                }, 3000);
+            },
+            generateUniqueId() {
+                return 'msg_' + Math.random().toString(36).substr(2, 9);
+            }
+        },
+        mounted() {
+            this.autoScroll();
+            this.getWarehouseRecord();
+            this.getDeliveryRecord();
+            this.getMessage();
+        }
+    });
+
+</script>
+</body>
+</html>
